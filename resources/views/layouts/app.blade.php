@@ -36,47 +36,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="widget widget-menu unstyled">
-                    <li>
-                <a href="{{ URL::route('home') }}">
-                    <i class="menu-icon icon-home"></i>Home
-                </a>
-            </li>
-            
-            <li>
-                <a href="{{ URL::route('user.index') }}">
-                    <i class="menu-icon icon-group"></i>All approved Users
-                </a>
-            </li>
-            <li>
-                <a href="{{ URL::route('book.index') }}">
-                    <i class="menu-icon icon-th-list"></i>All Books in Library
-                </a>
-            </li>
-            <li>
-                <a href="{{ URL::route('category.create') }}">
-                    <i class="menu-icon icon-folder-open-alt"></i>Add Book Category
-                </a>
-            </li>
-            <li>
-                <a href="{{ URL::route('book.create') }}">
-                    <i class="menu-icon icon-folder-open-alt"></i>Add Books
-                </a>
-            </li>
-            
-
-            <li>
-                <a href="{{ URL::route('issue.index') }}">
-                    <i class="menu-icon icon-signout"></i>Issue / Return Books
-                </a>
-            </li>
-            <li>
-                <a href="{{ URL::route('log.index') }}">
-                    <i class="menu-icon icon-list-ul"></i>View Log  
-                </a>
-            </li>
-
-                    </ul>
+                    
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">

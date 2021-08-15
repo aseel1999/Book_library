@@ -156,8 +156,8 @@ $search = $request->input('search');
 
 $books = Book::all()
     ->where('title', 'LIKE', "%{$search}%")
-    ->orWhere('publisher', 'LIKE', "%{$search}%")
+    ->orWhere('Author', 'LIKE', "%{$search}%")
     ->get();
-    return view('search', compact('books'));
+    return view('layout.search', compact('books'));
         
 }}

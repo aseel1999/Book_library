@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </form>
-                        @include('layouts.search')
+
                     </div>
                 </div>
             </div>
