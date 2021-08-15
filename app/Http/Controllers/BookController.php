@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Book;
+use App\Category;
+use App\Publisher;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -14,7 +16,7 @@ class BookController extends Controller
     public function index()
     {
         
-        $entity=Book::all(['*']);
+        $entity=Book::all();
         return view('book.index',[
             'books'=>$entity,
             'title'=>'BooksList'
@@ -29,8 +31,10 @@ class BookController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $publishers=Publisher::all();
-        return view('book.create',['categories'=>$categories,'publishers'=>$publishers]);
+        $publishers= Publisher::all();
+        return view('book.create',compact('categories','publishers'));
+         
+
     }
 
     /**
@@ -42,15 +46,23 @@ class BookController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate(Book::validateRules());
+       /* $request->validate([
+            'title'=>'required|string|max:255|min:3|unique:title',
+             'author'=>'required|string|max:255|min:3|unique:author',
+             'description'=>'nullable|min:5',
+             'category_id'=>'required|int|exists:categories,id',
+             'available'=>'required|int|in:1,0'
+        ]);*/
        
         $request->merge([
             'status'=>'active'
         ]);
      
         
-        $book=new Book([$request->all()
+        $book=new Book($request->all()
 
-        ]);
+        );
         $book->save();
         dd($book);
 
@@ -77,8 +89,10 @@ class BookController extends Controller
      */
     public function edit($id)
     {
+        $categories = Category::all();
+        $publishers= Publisher::all();
         $book=Book::find($id);
-        return view('book.edit',compact('book'));
+        return view('book.edit',compact('book','categories','publishers'));
     }
 
     /**
@@ -90,8 +104,10 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Book::where('id','=','$id')->update($request->all());
+        //Book::where('id','=','$id')->update($request->all());
         $book=Book::find($id);
+        $request->validate(Book::validateRules());
+        $book->update($request->all());
         //$book=new Book();
         return redirect()->route('book.index');
     }
@@ -108,4 +124,40 @@ class BookController extends Controller
         Book::destroy($id);
         return redirect()->route('book.index')->with('success','Book Deleated');
     }
+    public function trash(){
+        $books=Book::onlyTrashed()->paginate();
+        return view('book.trash',[
+            'books'=>$books,
+        ]);
+    }
+    public function restore(Request $request,$id=null){
+        if($id){
+        $book=Book::onlyTrashed()->findOrFail($id);
+        $book->restore();
+        return redirect()->route('book.index')->with('success','Book Restored');
+    }
+    Book::onlyTrashed()->restore();
+    return redirect()->route('book.index')->with('success','All Books Restored');
 }
+public function forceDelete($id=null){
+    if($id){
+        $book=Book::onlyTrashed()->findOrFail($id);
+        $book->forceDelete();
+        return redirect()->route('book.index')->with('success','Book deleted');
+    }
+    Book::onlyTrashed()->forceDelete();
+    return redirect()->route('book.index')->with('success','All Books deleted');
+
+}
+public function search(Request $request){
+
+$search = $request->input('search');
+
+
+$books = Book::all()
+    ->where('title', 'LIKE', "%{$search}%")
+    ->orWhere('publisher', 'LIKE', "%{$search}%")
+    ->get();
+    return view('search', compact('books'));
+        
+}}

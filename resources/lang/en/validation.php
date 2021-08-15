@@ -146,6 +146,17 @@ return [
     |
     */
 
-    'attributes' => [],
-
+    'attributes' => [
+        'name'=>'الاسم',
+        'year'=>'السنة',
+        'author'=>'المؤلف',
+        'title'=>'العنوان',
+        'issue_on'=>'تاريخ بداية الاستعارة',
+        'return_date'=>'تاريخ الارجاع',
+        'password'=>'كلمة السر',
+        'email'=>'الايميل',
+        'available'=>'متوفر',
+        'type'=>'النوع',
+        'status'=>'الحالة',
+    ],
 ];

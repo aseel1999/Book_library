@@ -17,7 +17,7 @@ class CreateBooksTable extends Migration
             $table->id();
             $table->string("title");
             $table->text("description")->nullable();
-            $table->integer("category_id");
+            $table->int("category_id");
             $table->integer("available");
             $table->integer("publisher_id");
 

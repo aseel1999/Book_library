@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Log;
+use App\Issue;
 class LogController extends Controller
 {
     /**
@@ -40,9 +41,17 @@ class LogController extends Controller
      */
     public function store(Request $request)
     {
-        $issue=new Issue([$request->all()
+        $request->validate(Log::validateRules());
+       /* $request->validate([
+            'issue_id'=>'requierd|int|exists:issues,id',
+            'status'=>'required|int|in:1,-1'
+        ]);*/
 
-        ]);
+
+
+        $issue=new Issue($request->all()
+
+        );
         $issue->save();
         dd($issue);
 
@@ -68,8 +77,9 @@ class LogController extends Controller
      */
     public function edit($id)
     {
+        $issues=Issue::all();
         $log=Log::find($id);
-        return view('log.edit',compact('log'));
+        return view('log.edit',compact('issues','log'));
     }
 
     /**
@@ -81,9 +91,10 @@ class LogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Log::where('id','=','$id')->update($request->all());
+       // Log::where('id','=','$id')->update($request->all());
         $log=Log::find($id);
-        
+        $request->validate(Log::validateRules());
+        $log->update($request->all());
         return redirect()->route('log.index');
     }
 

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Issue;
+use App\Book;
 class IssueController extends Controller
 {
     /**
@@ -13,9 +14,9 @@ class IssueController extends Controller
      */
     public function index()
     {
-        $entity=Issue::all(['*']);
+        $entity=Issue::all();
         return view('issue.index',[
-            'issue'=>$entity,
+            'issues'=>$entity,
             'title'=>'IssueList'
         ]);
         
@@ -41,6 +42,12 @@ class IssueController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(Issue::validateRules());
+      /*  $request->validate([
+            'issue_on'=>'required|date_formate:d/m/y',
+            'return_date'=>'required|date|after_or_equal:issue_on',
+            'book_id'=>'required|int|max:3|exists:books,id'
+        ]);*/
 
         
     $request->merge([
@@ -48,9 +55,9 @@ class IssueController extends Controller
         ]);
      
         
-        $issue=new Issue([$request->all()
+        $issue=new Issue($request->all()
 
-        ]);
+        );
         $issue->save();
         dd($issue);
 
@@ -76,8 +83,10 @@ class IssueController extends Controller
      */
     public function edit($id)
     {
+        
+        $books=Book::all();
         $issue=Issue::find($id);
-        return view('issue.edit',compact('issue'));
+        return view('issue.edit',compact('issue','books'));
     }
 
     /**
@@ -89,8 +98,10 @@ class IssueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Issue::where('id','=','$id')->update($request->all());
+       // Issue::where('id','=','$id')->update($request->all());
         $issue=Issue::find($id);
+        $request->validate(Issue::validateRules());
+        $issue->update($request->all());
         //$issue=newissue();
         return redirect()->route('issue.index');
     }

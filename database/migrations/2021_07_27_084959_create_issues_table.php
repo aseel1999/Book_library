@@ -15,8 +15,8 @@ class CreateIssuesTable extends Migration
     {
         Schema::create('issues', function (Blueprint $table) {
             $table->id();
-            $table->integer("issue_on");
-            $table->integer("return_date");
+            $table->date("issue_on");
+            $table->date("return_date");
             $table->integer("Book_id");
             $table->timestamps();
         });

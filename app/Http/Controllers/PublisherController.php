@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Publisher;
+use App\Book;
+
 
 class PublisherController extends Controller
 {
@@ -13,7 +16,7 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        $entity=Publisher::all(['*']);
+        $entity=Publisher::all();
         return view('publisher.index',[
             'publishers'=>$entity,
             'title'=>'PublisherList'
@@ -41,6 +44,16 @@ class PublisherController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(Publisher::validateRules());
+
+        /*$request->validate([
+            'name'=>'required|string|max:255|min:3|unique:name',
+            'book_id'=>'required|int|exists:books,id',
+            'year_of_publisher'=>'required|int'
+        ]);*/
+
+
+
         $request->merge([
             'status'=>'active'
         ]);
@@ -76,7 +89,8 @@ class PublisherController extends Controller
     public function edit($id)
     {
         $publisher=Publisher::find($id);
-        return view('publisher.edit',compact('publisher'));
+        $books = Book::all();
+        return view('publisher.edit',compact('publisher','books'));
     }
 
     /**
@@ -88,8 +102,11 @@ class PublisherController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Publisher::where('id','=','$id')->update($request->all());
+        //Publisher::where('id','=','$id')->update($request->all());
         $publisher=Publisher::find($id);
+        $request->validate(Publisher::validateRules());
+        $publisher->update($request->all());
+
         //$publisher=newPublisher();
         return redirect()->route('publisher.index');
     }

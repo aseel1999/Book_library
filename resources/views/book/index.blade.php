@@ -1,6 +1,13 @@
 @extends('layout.admin')
 @section('title')
-{{ $title }}}</h2><a href="{{route ('book.create')}}">Create</a>
+<div class="d-flex justify-content-between">
+<h2> Books</h2>
+<div class="">
+<a class="btn btn-sm btn-outline-primary" href="{{route ('book.create')}}">Create</a>
+<a class="btn btn-sm btn-outline-primary" href="{{route ('book.trash')}}">Trash</a>
+</div>
+</div>
+
 @endsection
 @section('breadcrumb')
 <ol class="breadcrumb float-sm-right">  
@@ -10,10 +17,11 @@
 @endsection
 @section('content')
 
+<x-alert />
 <table class="table">
     <thead>
         <tr>
-           <th><{{loop}}</th> 
+           
             <th>Id</th>
             <th>Title</th>
             <th>Author</th>
@@ -29,15 +37,15 @@
     <tbody>
         @foreach ($books as $book)
         <tr>
-            <td>{{$loop}}</td>
+           
             <td>{{$book->id}}</td>
-            <td>{{$book->title}}</td>
+            <td>{{$book->original_title}}</td>
             <td>{{$book->author}}</td>
             <td>{{$book->description}}</td>
             <td>{{$book->category_id}}</td>
             <td>{{$book->publisher_id}}</td>
             <td>{{$book->available}}</td>
-            <td><a href="{{route(book.edit},['id'=> $book->id'])}}" class="btn btn-sm btn-dark">Edit</a></td>
+            <td><a href="{{route('book.edit',$book->id)}}" class="btn btn-sm btn-dark">Edit</a></td>
             <td><form action="{{route('book.destroy',$book->id)}}" method="post">
               @csrf
               @method('delete')

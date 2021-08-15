@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -13,7 +13,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $entity=User::all(['*']);
+        $entity = User::all();
         return view('user.index',[
             'users'=>$entity,
             'title'=>'UsersList'
@@ -39,6 +39,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate(User::validateRules());
+       /* $request->validate([
+            'name'=>'required|string|max:255|min:3|unique:name',
+            'email'=>'required|email',
+            'password'=>'required|password'
+        ]);
+*/
+
         $request->merge([
             'status'=>'active'
         ]);
@@ -73,8 +81,8 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user=User::find($id);
-        return view('User.edit',compact('user'));
+        $user= User::find($id);
+        return view('user.edit',compact('user'));
     }
 
     /**
@@ -86,8 +94,11 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        User::where('id','=','$id')->update($request->all());
+        //User::where('id','=','$id')->update($request->all());
         $user=User::find($id);
+        $request->validate(User::validateRules());
+        $user->update($request->all());
+
         //$user=new User();
         return redirect()->route('user.index');
     }

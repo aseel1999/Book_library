@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Validator;
+use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -14,9 +15,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $entity=Category::all(['*']);
+        $categs=Category::all();
         return view('category.index',[
-            'categories'=>$entity,
+            'categories'=>$categs,
             'title'=>'CategoriesList'
         ]);
 // $entity=Category::all(['id','name']);
@@ -41,35 +42,42 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $request->all();
-       // $request->cat_name;
-       // $request->get('cat_name');
-       // $request->post('cat_name');
-       // $request->input('cat_name');
-        //$request->query('cat_name');//?cat_name=value
-       
-       //1 $category=new Category();
-       /* $category->cat_name=$request->post('cat_name');
-        $category->save();
+        $request->validate(Category::validateRules());
         
-        
-       /* //2
-        $category=Category::create([
-            $request->all()
-
+        /*$rules=[
+            'cat_name'=>'required|string|max:255|min:3|unique:cat_name',
+        ];*/
+     /*  $clean = $request->validate($rules,[
+            'required'=>"The :attribute required",
         ]);*/
-        $request->merge([
-            'status'=>'active'
-        ]);
-     
-        //3
-        $category=new Category([$request->all()
+        //$clean=$this-validate($request,$rules);
+       /* $cat=new Category();
+       $data = $request->all();
+        $validator = Validator::make($data,$cat->rules);*/
+        //$clean=$validator->validate();
+        // throw exception
+        /*try{
+            
+           $clean=$validator->validated();
+         }catch(Throwable $e){
+             return $validator->failed();//returns field
+            return redirect()->back()->withErrors($validator);
 
+         }*/
+
+       /*if($validator->fails()){
+            //$errors=$validator->errors();
+            return redirect()->back()->withErrors($validator)->withInput();
+        }*/
+
+        $request->merge([
+            'status'=>'active',
         ]);
+        $category = new Category($request->all());
         $category->save();
         dd($category);
 
-        return redirect()->route('category.index');
+        return redirect()->route('category.index')->with('success','Category Created');
     }
 
     /**
@@ -80,7 +88,10 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category=Category::findOrFail($id);
+        return view('category.show',[
+            'category'=>$category,
+        ]);
     }
 
     /**
@@ -91,9 +102,12 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //Category::where('id','=','$id')->first();
-        $category=Category::find($id);
-        return view('category.edit',compact('category'));
+        //Category::where('id','=','$id')->whereNull('deleted_at')first();
+        $category=Category::findOrFail($id);
+       
+        return view('category.edit',[
+            'category'=>$category
+        ]);
     }
 
     /**
@@ -105,9 +119,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Category::where('id','=','$id')->update($request->all());
+        /*$rules=[
+            'cat_name'=>'required|string|max:255|min:3|unique:cat_name',
+        ];
+        $clean=$request->validate($rules);*/
+        
         $category=Category::find($id);
-        $category=new Category();
+        $request->validate(Category::validateRules());
+        $category->update($request->all());
+        
         //1
        /* $category->cat_name=$request->post('cat_name');
         $category->save();*/
@@ -115,7 +135,7 @@ class CategoryController extends Controller
        //$category->update([$request->all()]);
        //3
        //$categoty->fill([$request->all()])->save();
-       return redirect()->route('category.index');
+       return redirect()->route('category.index')->with('success','Category Updated');
 
     }
 
